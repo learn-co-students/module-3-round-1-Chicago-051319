@@ -4,14 +4,27 @@ const likeURL = `https://randopic.herokuapp.com/likes/`
 
 const commentsURL = `https://randopic.herokuapp.com/comments/`
 
+const comments = document.querySelector('#comments')
 
 document.addEventListener('DOMContentLoaded', () => {
-  
   
   fetchImage()
   likeListener()
   submitComment()
+  deleteListener()
 })
+
+function deleteListener(){
+  comments.addEventListener("click", e => clickDelete(e))
+}
+
+function clickDelete(e){
+  if (e.target.dataset.id){
+    const id = e.target.dataset.id
+    e.target.parentNode.remove()
+  }
+}
+
 
 function submitComment(){
   const submitBtn = document.querySelector('#submit')
@@ -20,13 +33,11 @@ function submitComment(){
 
 function renderComments(e){
   e.preventDefault()
-  const ul = document.querySelector('#comments')
 
   const li = document.createElement('li')
   const comment = e.target.previousSibling.previousSibling.value
   li.innerText = comment
-
-  ul.append(li)
+  comments.append(li)
   postComment(comment)
 }
 
@@ -48,16 +59,10 @@ function postComment(comment){
   .then(data => console.log(data))
 }
 
-
-
 function likeListener(){
   const like = document.querySelector('#like_button')
   like.addEventListener("click", e => addLike(e))
 }
-
-
-
-
 
 
 function addLike(e){
@@ -97,13 +102,17 @@ function renderImage(data){
   const img = document.querySelector('#image')
   const name = document.querySelector('#name')
   const likes = document.querySelector('#likes')
-  const comments = document.querySelector('#comments')
+  
   img.src = data.url
   name.innerHTML = data.name
   likes.innerHTML = data.like_count
   data.comments.forEach(comment => {
     const li = document.createElement('li')
     li.innerText = comment.content
+    const deleteComment = document.createElement('button')
+    deleteComment.dataset.id = comment.id
+    deleteComment.innerText = "Delete"
+    li.append(deleteComment)
     comments.append(li)
   });
 }
