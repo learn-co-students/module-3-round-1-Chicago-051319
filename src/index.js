@@ -22,7 +22,15 @@ function clickDelete(e){
   if (e.target.dataset.id){
     const id = e.target.dataset.id
     e.target.parentNode.remove()
+    deleteComment(id)
   }
+}
+
+function deleteComment(id){
+  //there is CORS error from deleting from the API. Have to go into config to add delete
+  fetch(`commentsURL/${id}`, {method: "DELETE"})
+  .then(resp => resp.json())
+  .then(data => console.log(data))
 }
 
 
@@ -37,6 +45,10 @@ function renderComments(e){
   const li = document.createElement('li')
   const comment = e.target.previousSibling.previousSibling.value
   li.innerText = comment
+  const deleteComment = document.createElement('button')
+  deleteComment.dataset.id = comment.id
+  deleteComment.innerText = "Delete"
+  li.append(deleteComment)
   comments.append(li)
   postComment(comment)
 }
